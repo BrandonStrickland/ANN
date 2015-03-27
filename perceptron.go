@@ -21,6 +21,15 @@ inputs                the input represented as a float64
 type perceptron struct {
 	weights [] float64
 	inputs [] float64
+	govFunction func(input float64) float64
+}
+
+
+/* TODO: make this an attribute of the perceptron.
+sigmoid is a function that governs the output of the perceptron.
+*/
+func sigmoid(input float64) float64 {
+	return 1 / (1 + math.Exp(-input))
 }
 
 /*
@@ -36,7 +45,9 @@ func makePerceptron(number int) perceptron {
 	}
 	
 	inputs := make([]float64,number)
-	return perceptron{weights,inputs}
+	//Currently, we are going to use the sigmoid function.
+	//for governing the function output.
+	return perceptron{weights,inputs,sigmoid}
 }
 
 /*
@@ -51,14 +62,6 @@ func (p perceptron) dotProduct() float64 {
 	return dotProduct
 }
 
-/* TODO: make this an attribute of the perceptron.
-sigmoid is a function that governs the output of the perceptron.
-We can think of this as the 
-*/
-func sigmoid(input float64) float64 {
-	return 1 / (1 + math.Exp(-input))
-}
-
 /* TODO: reword this description!
 This is the eval function. We multiply the inputs against
 the weights (the dot product) and run THAT answer through
@@ -66,7 +69,7 @@ a function that governs the perceptron.
 */
 func (p perceptron) eval() float64 {
 	dp := p.dotProduct()
-	return sigmoid(dp)
+	return p.govFunction(dp)
 }
 
 func main() {
